@@ -246,8 +246,8 @@ KillingCheats:CreateButton("Anti ragdoll", function()
 loadstring(game:HttpGet("https://rawscripts.net/raw/Shoot-People-Off-A-Map-Simulator-nti-kb-8005"))()
 end)
 
-local tspeed = 1
-local minSpeed = 1
+local tspeed = 0
+local minSpeed = 0
 local maxSpeed = 100
 local hb = game:GetService("RunService").Heartbeat
 local tpwalking = true
