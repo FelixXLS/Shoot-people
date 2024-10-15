@@ -245,3 +245,59 @@ local KillingCheats = PhantomForcesWindow:NewSection("Misc")
 KillingCheats:CreateButton("Anti ragdoll", function()
 loadstring(game:HttpGet("https://rawscripts.net/raw/Shoot-People-Off-A-Map-Simulator-nti-kb-8005"))()
 end)
+
+local tspeed = 1
+local minSpeed = 1
+local maxSpeed = 100
+local hb = game:GetService("RunService").Heartbeat
+local tpwalking = true
+local player = game:GetService("Players")
+local lplr = player.LocalPlayer
+local hum
+
+local function isNumber(str)
+    return tonumber(str) ~= nil or str == 'inf'
+end
+
+local function adjustSpeed(newSpeed)
+    if isNumber(newSpeed) then
+        local speedValue = tonumber(newSpeed)
+        if speedValue < minSpeed then
+            tspeed = minSpeed
+        elseif speedValue > maxSpeed then
+            tspeed = maxSpeed
+        else
+            tspeed = speedValue
+        end
+    end
+end
+
+local function setupCharacter()
+    local chr = lplr.Character or lplr.CharacterAdded:Wait()
+    hum = chr:WaitForChild("Humanoid")
+
+    -- Reemplazo de input field por KillingCheats:CreateTextbox
+    KillingCheats:CreateTextbox("Speed", function(text)
+        adjustSpeed(text)
+    end)
+
+    -- Bucle de movimiento
+    spawn(function() -- Usar spawn para permitir que el bucle funcione en paralelo
+        while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+            if hum.MoveDirection.Magnitude > 0 then
+                local adjustedSpeed = tspeed * 0.2  -- Aumenta el multiplicador para velocidad mínima
+                chr:TranslateBy(hum.MoveDirection * adjustedSpeed)
+            end
+        end
+    end)
+end
+
+-- Configurar el personaje al iniciar
+setupCharacter()
+
+-- Conectar la función al evento CharacterAdded
+lplr.CharacterAdded:Connect(function()
+    -- Esperar que el nuevo personaje se configure antes de ejecutar
+    wait(0.5)  -- Espera un breve momento para asegurar que el personaje se cargue
+    setupCharacter()
+end)
